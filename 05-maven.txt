@@ -1,0 +1,45 @@
+#maven
+sudo apt install openjdk-8-jdk-headless
+sudo apt install maven
+
+
+#nexus 
+sudo apt install openjdk-8-jdk-headless
+wget https://download.sonatype.com/nexus/oss/nexus-latest-bundle.tar.gz
+tar -xf nexus-latest-bundle.tar.gz
+sudo mv nexus-2.14.9-01/ /opt/
+sudo mv sonatype-work/ /opt/
+sudo ln -s /opt/nexus-2.14.9-01/bin/nexus /usr/bin
+cat /opt/nexus-2.14.9-01/conf/nexus.properties	#to configure port numbers of nexus
+nexus start
+ls /opt/nexus-2.14.9-01/logs
+cat /opt/nexus-2.14.9-01/logs/wrapper.log	#to see and debug logs
+http://ec2-18-223-116-36.us-east-2.compute.amazonaws.com:8081/nexus	#to access in the browser
+
+#nexus ui	default user: admin/admin123
+1. Create repo - snapshots and releases.
+2. Create repo target privileges, under 'Add' function of privileges tab. 
+	this has to be done for both the repository types.
+3. Add 'nexus' role and assign privileges.
+4. Add 'nexus' user and assign the role.
+
+#maven .m2/settings.xml file
+1. Add nexus repo and user ids b
+
+#git/maven project level configuration: pom.xml
+1. Add the releases and snapshots nexus urls under the <distributionManagement> section: output.
+2. Also add the release/snapshot nexus repo under the  <repositories> section: input. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

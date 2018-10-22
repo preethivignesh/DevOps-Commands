@@ -1,0 +1,19 @@
+# Sonar Qube Installation		admin/admin
+sudo apt install openjdk-8-jdk-headless
+wget https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-5.6.6.zip
+unzip sonarqube-5.6.6.zip
+sudo mv sonarqube-5.6.6/ /opt/
+sudo ln -s /opt/sonarqube-5.6.6/bin/linux-x86-64/sonar.sh /usr/bin/
+sonar.sh start
+
+# Sonar UI
+http://ec2-18-222-188-107.us-east-2.compute.amazonaws.com:9000/
+
+# Enabling sonar host in jenkins slave
+1. In the ~/.m2/settings.xml file, enable the below string pointing towards sonar host:
+	<sonar.host.url>http://ip-172-31-42-45.us-east-2.compute.internal:9000</sonar.host.url>
+2. In the Jenkins Master, under the 'Build' section, 'Goals and options' enter 'clean deploy sonar:sonar pmd:pmd'.
+
+
+
+

@@ -1,0 +1,22 @@
+{
+  "nodes": {
+    "narmada.cegres.co.in": {
+      ":ip": "192.168.64.12",
+      "ports": [],
+      ":memory": 3072,
+      ":bootstrap": "bootstrap.sh"
+    },
+    "sindhu.cegres.co.in": {
+      ":ip": "192.168.64.18",
+      "ports": [],
+      ":memory": 1024,
+      ":bootstrap": "bootstrap.sh"
+    },
+    "kauveri.cegres.co.in": {
+      ":ip": "192.168.64.20",
+      "ports": [],
+      ":memory": 1024,
+      ":bootstrap": "bootstrap.sh"
+    }
+  }
+}

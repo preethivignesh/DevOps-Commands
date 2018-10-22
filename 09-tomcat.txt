@@ -1,0 +1,35 @@
+#tomcat8	tomcat/tomcat123
+
+sudo apt-get update
+sudo apt-get install default-jdk
+sudo apt-get install tomcat8
+sudo apt-get install tomcat8-docs tomcat8-examples tomcat8-admin
+
+sudo systemctl start tomcat8
+sudo systemctl stop tomcat8
+sudo systemctl restart tomcat8
+
+
+# edit config 
+vi /etc/tomcat8/tomcat-users.xml
+<tomcat-users>
+ <role rolename="tomcat"/>
+  <role rolename="admin-gui"/>
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script">
+  <user username="tomcat" password="tomcat123" roles="tomcat,admin-gui,manager-gui,manager-script"/>
+</tomcat-users>
+
+OR
+
+<tomcat-users>
+  <role rolename="manager-gui"/>
+  <user username="tomcat" password="tomcat123" roles="manager-gui"/>
+</tomcat-users>
+
+# deployment folder
+ls /var/lib/tomcat8/webapps/
+
+# run
+/usr/share/tomcat8/bin/startup.sh
+

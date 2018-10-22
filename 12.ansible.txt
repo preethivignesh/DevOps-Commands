@@ -1,0 +1,40 @@
+# Ansible Commands
+
+#1	SSH Configuration
+	sudo adduser vagrant sudo
+	apt-get install openssh-server	
+	ssh-keygen 		
+	ssh-copy-id sindhu.cegres.co.in	
+	vi /etc/ssh/sshd_config	#enable PasswordAuthentication yes temporarily
+	service sshd restart
+	ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@sindhu.cegres.co.in -p 22 
+
+#3	Ansible installation
+	apt-add-repository ppa:ansible/ansible
+	apt-get update
+	apt-get install ansible
+
+#4	Ansible configuration
+	vi /etc/ansible/hosts
+	[appservers]
+	sindhu.cegres.co.in
+	kauveri.cegres.co.in
+	
+#5	Ping server group through ansible
+	ansible -m ping appservers
+	
+#6	
+
+Successful with Puppet and Docker. But not with Ansible. When I am trying to run playbooks, there was a problem in SSH forwarding with the sudo account. With normal user I am able to connect to slave nodes. But with sudo user I could not connect even after copying the public keys manually.
+
+
+
+
+
+
+
+
+
+
+
+

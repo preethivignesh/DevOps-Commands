@@ -1,0 +1,76 @@
+# Jenkins	initial user: admin/jenkins123
+
+sudo apt install openjdk-8-jdk-headless
+sudo wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+sudo add-apt-repository "deb https://pkg.jenkins.io/debian-stable binary/"
+sudo apt-get update
+sudo apt-get install jenkins
+
+sudo service jenkins status | start | stop | restart
+
+# UI functions
+
+# Building through maven nodes
+1. Configure maven node from jenkins master. In the 'Launch Method' select 'Launch Agent via Java WebStart'.
+
+2. Copy the agent jnlp code from jenkins ui. And also copy agent.jar file.
+java -jar agent.jar -jnlpUrl http://aindri:8080/computer/aindri/slave-agent.jnlp -secret 9a083fd7db03c70ad76eb4e012e1a8768570b559dc3cc5cb942540c2553772a7 -workDir "/home/ubuntu/jenkinslave" &
+
+3. Create a directory called jenkins-slave in the maven node. Create a file called startup.sh and paste the jnlp content over there. Give chmod 777 to that file. also do a wget of the agent file.
+
+4. Run startup.sh from the maven node. In case of any previous jnlp jobs running, kill them using 'jps' then 'kill'.
+
+5. Now build from jenkins master.
+
+6. The built war file will be available on the nexus server node.
+
+# Build Triggers
+1. Build the connection string from Jenkins UI. First part comes from user credentials.
+	user:API Token
+	admin:37a1e10f1486cffbc846959d1e446339
+   Second part comes from the 'Build Triggers' section of the Build job.
+    JENKINS_URL/job/spring-app/build?token=TOKEN_NAME or /buildWithParameters?token=TOKEN_NAME
+	i.e.
+	http://ec2-18-191-217-9.us-east-2.compute.amazonaws.com:8080/job/spring-app/build?token=randomqgdjdjwcng
+	
+	Finally the overall string is like the below.
+	http://admin:37a1e10f1486cffbc846959d1e446339@ec2-18-191-217-9.us-east-2.compute.amazonaws.com:8080/job/spring-app/build?token=randomqgdjdjwcng
+
+2. That string needs to placed inside the GitHub's WebHooks section.
+	ProjectRepo -> Settings -> Add Webhook
+	And choose 'Content Type' as 'application/json'.
+	
+3. Now any changes done on the code will trigger a build automatically.
+
+4. Optionally we can test by calling the REST API through any terminal like this.
+	curl -i http://admin:37a1e10f1486cffbc846959d1e446339@ec2-18-191-217-9.us-east-2.compute.amazonaws.com:8080/job/spring-app/build?token=randomqgdjdjwcng
+
+# Parameterizing Build Branches / Tags [Static Option]
+1. Go to 'Branches to build' section and inside the "Branch Specifier (blank for 'any')" mention a variable '${branch_tag}'.
+2. In 'General' section, select 'This project is parameterized' and give name as 'branch_tag' and value list as 'dev, master, rel-3.0'.
+
+# Parameterizing Build Branches / Tags [Dynamic Option]
+1. Go to 'Manage Jenkins' section and install two plugins - 'Extended Choice Parameter', and 'Extensible Choice Parameter'.
+2. Go to config section of the build. In 'General' section, select 'This project is parameterized'.
+3. Select 'Extended Choice Parameter'. In the name section fill 'branch_tag'. Select 'Basic Parameter Type' as 'Single Select' and in the 'Groovy Script' add the below.
+
+	def getbranches = "git ls-remote -h -t https://github.com/spothukuchi/maven-addressbook.git".execute()
+	def branches = []
+	def b1 = []
+	getbranches.text.eachLine {branches.add(it)}
+	for(i in branches)
+	b1.add(i.split()[1].replaceAll('\\^\\{\\}', '').replaceAll('refs/tags/', '').replaceAll('refs/heads/', ''))
+	b1 = b1.unique()
+	return b1
+
+4. Save configuration.
+5. For the first time, we need to approve the script while selecting the 'Build with Parameters'.
+
+# Sonar Integration
+Under the 'Build' section, 'Goals and options' enter 'clean deploy sonar:sonar pmd:pmd'.
+
+--Jenkins Master--
+clean deploy sonar:sonar pmd:pmd
+clean package deploy sonar:sonar pmd:pmd tomcat7:deploy -P tomcat-remote-profile
+
+

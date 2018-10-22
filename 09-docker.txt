@@ -1,0 +1,24 @@
+#	Installing Docker:
+	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+	sudo apt-get update
+	apt-cache policy docker-ce
+	sudo apt-get install -y docker-ce
+	
+#	Remove docker containers and images
+	docker system prune -all
+
+#	Useful commands
+	docker help
+	docker ps	#list of active containers
+	docker ps -a #all containers including past ones
+	docker search xyz
+	docker pull xyz
+	docker run xyz
+
+#	Interactive, Terminal Connect, Detached/Root User Mode
+	docker run -itd ubuntu:xenial	#detached
+	docker run -it ubuntu:xenial	#root user mode
+
+#	Executing a container
+	

@@ -1,0 +1,26 @@
+1.	Adding to path:
+	You need to add it to your ~/.profile or ~/.bashrc file. 
+		export PATH="$PATH:/path/to/dir"
+	Depending on what you're doing, you also may want to symlink to binaries:
+		cd /usr/bin
+		sudo ln -s /path/to/binary binary-name
+	Note that this will not automatically update your path for the remainder of the session. To do this, you should run:
+		source ~/.profile 
+		or
+		source ~/.bashrc
+
+2. Entering as root
+	sudo -s
+	exit # back to user prompt
+
+3. hostname -f	#hostname as single line
+
+
+
+java -jar agent.jar -jnlpUrl http://ip-172-31-34-127.us-east-2.compute.internal:8080/computer/aindri/slave-agent.jnlp -secret 9a083fd7db03c70ad76eb4e012e1a8768570b559dc3cc5cb942540c2553772a7 -workDir "/home/ubuntu/jenkinslave"
+
+
+--Samba Configuration
+sudo apt-get purge samba-common
+sudo apt-get install samba samba-common system-config-samba
+

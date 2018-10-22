@@ -1,0 +1,50 @@
+SYNOPSYS
+AWS EC2 Instances
+----------------------------------------------------------------------
+172.31.32.178	aindri
+172.31.39.103	bhairavi
+172.31.34.127	chidrupi
+172.31.42.45	kamala
+172.31.39.60	varahi
+172.31.36.139	vimala
+172.31.41.248	yamuna
+
+ip-172-31-41-248.us-east-2.compute.internal
+ssh -i "cegres.pem" ubuntu@ec2-18-223-169-77.us-east-2.compute.amazonaws.com
+
+S3 Location:
+https://s3.ap-south-1.amazonaws.com/cegres-aws-keys/cegres.pem
+
+VAGARNT Machines through XTerm
+----------------------------------------------------------------------
+192.168.64.12   narmada.cegres.co.in
+192.168.64.18   sindhu.cegres.co.in	
+192.168.64.20	kauveri.cegres.co.in
+
+vagrant up
+#vagrant ssh-config > vagrant-ssh   
+ssh -F vagrant-ssh narmada | sindhu | kauveri [.cegres.co.in]
+vagrant halt
+
+----------------------------------------------------------------------
+DETAILS
+# Setting up hosts in Windows using Vagrant & VirtualBox
+------------------------------------------------------------------------
+0. Set up VirtualBox Gateway as 192.168.64.1. DHCP Server not required.
+
+1. Add host entries into windows file: C:\Windows\System32\drivers\etc\hosts
+192.168.64.12   narmada.cegres.co.in	
+
+2. If successful, ping command on the domain name should return proper response pockets.
+
+3. Using SCP
+1. Copy the text entry of the public key found in the Windows machine to Linux VM.
+	Content of [C:\Users\Srikrishna P\.ssh\id_rsa.pub] to go as ONE ENTRY of Linux VM -> [/home/vagrant/.ssh/authorized_keys]
+	Target file contains some public keys already. So we should not replace them.
+	
+2. Copy source file to destination directory, i.e. from Windows to Linux
+	scp sample.txt vagrant@narmada:/home/vagrant
+	
+3. Copy source directory to destination directory, i.e. from Windows to Linux
+	scp -r sample-project vagrant@kauveri:/home/vagrant
+	

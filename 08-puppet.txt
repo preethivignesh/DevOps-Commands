@@ -1,0 +1,179 @@
+I - Host Configuration:
+-----------------------------------
+AWS
+#1 	Server-side: Add host name alias for each of the machines for easier identification. The localhost section is given for convenience. Below is the host configuration of Puppet server.
+	sudo vi /etc/hosts
+	# localhost
+	127.0.0.1       localhost #required, already there
+	172.31.41.248   yamuna #easier identification
+	172.31.41.248   puppet #easier identification
+	
+	#peers
+	172.31.39.103   bhairavi	#all peers to be given in this way, if you want to operate on hostname.
+	172.31.34.127   chidrupi
+	172.31.42.45    kamala
+	172.31.36.139   vimala
+	
+#2	Client-side: Similarly add puppet server ip to each of the agents.
+	sudo vi /etc/hosts
+	#localhost
+	127.0.0.1       localhost
+	172.31.39.103   bhairavi
+	172.31.39.103   puppet-agent	#compulsory
+	
+	#peers
+	172.31.41.248   puppet          #compulsory
+	172.31.34.127   chidrupi
+	172.31.42.45    kamala
+	172.31.36.139   vimala
+
+Vagrant
+	
+#1	Server-side: narmada
+	sudo vi /etc/hosts
+	# localhost
+	127.0.0.1       localhost
+	192.168.64.12   narmada.cegres.co.in 
+	192.168.64.12   puppet	
+	
+	#peers
+	192.168.64.18   sindhu.cegres.co.in
+	192.168.64.20   kauveri.cegres.co.in
+	
+#2	Client-side: sindhu
+	sudo vi /etc/hosts
+	# localhost
+	127.0.0.1       localhost
+	192.168.64.18   sindhu.cegres.co.in 
+	192.168.64.18   puppet-agent	
+	
+	#peers
+	192.168.64.12   puppet
+	192.168.64.12   narmada.cegres.co.in
+	192.168.64.20   kauveri.cegres.co.in	
+	
+	Client-side: kauveri
+	sudo vi /etc/hosts
+	# localhost
+	127.0.0.1       localhost
+	192.168.64.20   kauveri.cegres.co.in 
+	192.168.64.20   puppet-agent	
+	
+	#peers
+	192.168.64.12   puppet
+	192.168.64.12   narmada.cegres.co.in
+	192.168.64.18   sindhu.cegres.co.in	
+	
+Set up Ubuntu repositories:
+	sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main universe restricted multiverse"
+
+-----------------------------------
+II 	Puppet Installation and Running
+
+#1	Install Puppet Server.
+	wget https://apt.puppetlabs.com/puppet5-release-bionic.deb
+	sudo dpkg -i puppet5-release-bionic.deb
+	sudo apt update
+	sudo apt upgrade
+	sudo apt-get install puppetserver
+	sudo ufw allow 8140		
+	sudo service puppetserver start
+	sudo /opt/puppetlabs/bin/puppet resource service puppetserver ensure=running enable=true
+	sudo /opt/puppetlabs/bin/puppet resource service puppetserver ensure=stopped enable=false	
+	sudo service puppetserver restart
+	sudo ln -s /opt/puppetlabs/bin/puppet /usr/bin/
+	
+	sudo vim  /etc/puppetlabs/puppet/puppet.conf
+	[main]
+	certname = sindhu.cegres.co.in
+	certname = kauveri.cegres.co.in
+	server = puppet
+	
+
+#2	Install Puppet Agent.
+	wget https://apt.puppetlabs.com/puppet5-release-bionic.deb
+	sudo dpkg -i puppet5-release-bionic.deb
+	sudo apt update
+	sudo apt upgrade
+    sudo apt-get install puppet-agent
+	sudo ln -s /opt/puppetlabs/bin/puppet /usr/bin
+
+#3	***Start Puppet Agent***
+	sudo puppet agent -t
+	sudo /opt/puppetlabs/bin/puppet resource service puppet ensure=running enable=true
+	sudo /opt/puppetlabs/bin/puppet resource service puppet ensure=stopped enable=false
+	
+#4	As soon as Puppet Agent is started for the first time, Puppet Server seeks certificates. Run this on Puppet Master.
+	sudo /opt/puppetlabs/bin/puppet cert list
+	
+#5 Sign certificates on Puppet Master.
+	sudo /opt/puppetlabs/bin/puppet cert sign --all
+	To see all certificates list irrespective of status.
+	sudo /opt/puppetlabs/bin/puppet cert list --all
+	Optionally we can revoke like this. If we use 'revoke' option instead of 'clean', all remnant certificate files won't be cleaned.
+	sudo /opt/puppetlabs/bin/puppet cert clean <hostname>
+	after cleaning, puppet agent -t on client side will initiate the certification process.
+	
+	-----------------------------------
+III	Puppet Commands
+
+#1	Create site.pp on Puppet Master
+	sudo touch /etc/puppetlabs/code/environments/production/manifests/site.pp
+	
+#2	Edit it to contain
+	sudo vi /etc/puppetlabs/code/environments/production/manifests/site.pp
+	
+	file {'/tmp/example-ip':                                            # resource type file and filename
+      ensure  => present,                                               # make sure it exists
+      mode    => '0644',                                                # file permissions
+      content => "Here is my Public IP Address: ${ipaddress_eth0}.\n",  # note the ipaddress_eth0 fact
+    }
+
+
+#3	To create file
+	file{'/home/puppet-pull-file.txt':
+	ensure => present,
+	content => 'puppet file content by pull method',
+	owner => 'vagrant'
+	}
+	
+#4	To install a package
+	package{'tree':
+	ensure => 'present',
+	#ensure => 'installed',
+	#ensure => 'absent',
+	#ensure => 'purged',
+}
+
+#5	To update a package
+	package{'git':
+	ensure => 'present',
+	}
+	exec{'apt-update':
+	command => '/usr/bin/apt-get update'
+	}
+
+#6	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	

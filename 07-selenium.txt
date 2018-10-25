@@ -1,0 +1,27 @@
+#Selenium Web Driver
+
+#On Ubuntu box
+wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz
+tar -xvzf geckodriver-v0.23.0-linux64.tar.gz
+#disable ufw on ubuntu temporarily or update firewall rules on ufw if you cannot update
+
+#firefox headless on ubuntu
+sudo apt-add-repository ppa:mozillateam/firefox-next
+sudo apt-get update
+sudo apt-get install firefox xvfb
+Xvfb :10 -ac &
+export DISPLAY=:10
+
+#Maven surefire plugin to be added in pom.xml file with testng.xml file pointer.
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-surefire-plugin</artifactId>
+  <version>2.22.1</version>
+  <type>maven-plugin</type>
+  <configuration>
+  <suiteXmlFiles>
+	<suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
+  </suiteXmlFiles>
+  </configuration>  
+</plugin>
+

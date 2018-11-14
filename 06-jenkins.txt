@@ -6,6 +6,11 @@ sudo add-apt-repository "deb https://pkg.jenkins.io/debian-stable binary/"
 sudo apt-get update
 sudo apt-get install jenkins
 
+sudo ufw allow 8080
+sudo ufw allow OpenSSH
+sudo ufw enable
+sudo ufw status
+
 sudo service jenkins status | start | stop | restart
 
 # UI functions

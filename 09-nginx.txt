@@ -8,3 +8,7 @@ sudo ufw app list
 
 # to allow traffic on port 80
 sudo ufw allow 'Nginx HTTP'
+
+
+#remove
+sudo apt-get purge nginx nginx-common

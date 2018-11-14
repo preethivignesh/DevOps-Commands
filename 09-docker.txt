@@ -26,3 +26,6 @@
 # wordpress on docker
 docker pull wordpress
 docker run -e WORDPRESS_DB_PASSWORD=wordpress123 --name wordpress --link wordpressdb:mysql -p 80:80 -v "$PWD/html":/var/www/html -d wordpress
+
+#docker stack deploy on swarm
+docker stack deploy --compose-file docker-compose.yml ds

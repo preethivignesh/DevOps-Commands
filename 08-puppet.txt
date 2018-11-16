@@ -99,7 +99,9 @@ II 	Puppet Installation and Running
 	sudo ln -s /opt/puppetlabs/bin/puppet /usr/bin
 
 #3	***Start Puppet Agent***
-	sudo puppet agent -t
+	sudo puppet agent -t 
+	(or specify puppet master like below explicitly)
+	sudo /usr/bin/puppet agent --server puppet
 	sudo /opt/puppetlabs/bin/puppet resource service puppet ensure=running enable=true
 	sudo /opt/puppetlabs/bin/puppet resource service puppet ensure=stopped enable=false
 	
@@ -110,15 +112,39 @@ II 	Puppet Installation and Running
 	sudo /opt/puppetlabs/bin/puppet cert sign --all
 	To see all certificates list irrespective of status.
 	sudo /opt/puppetlabs/bin/puppet cert list --all
-	Optionally we can revoke like this. If we use 'revoke' option instead of 'clean', all remnant certificate files won't be cleaned.
-	sudo /opt/puppetlabs/bin/puppet cert clean <hostname>
-	after cleaning, puppet agent -t on client side will initiate the certification process.
+
+
+#6 Cleaning and regenerating Puppet certificates
+Optionally we can revoke like this. If we use 'revoke' option instead of 'clean', all remnant certificate files won't be cleaned.
+# on master
+sudo /opt/puppetlabs/bin/puppet cert clean <hostname>
+
+# on agent
+sudo puppet resource service puppet ensure=stopped
+
+# on master
+sudo puppet resource service puppetserver ensure=stopped
+sudo rm -r /etc/puppetlabs/puppet/ssl
+sudo puppet cert list -a
+sudo puppet master --no-daemonize --verbose
+#When you see Notice: Starting Puppet master <your Puppet version>, type CTRL + C
+sudo puppet resource service puppetserver ensure=running
+
+#on agent
+sudo puppet resource service puppet ensure=running
+
+
 	
 	-----------------------------------
 III	Puppet Commands
 
 #1	Create site.pp on Puppet Master
 	sudo touch /etc/puppetlabs/code/environments/production/manifests/site.pp
+
+class { 'docker':
+  package_name => 'docker.io',
+  docker_users => ['ubuntu'],
+}
 	
 #2	Edit it to contain
 	sudo vi /etc/puppetlabs/code/environments/production/manifests/site.pp

@@ -79,3 +79,25 @@ clean deploy sonar:sonar pmd:pmd
 clean package deploy sonar:sonar pmd:pmd tomcat7:deploy -P tomcat-remote-profile
 
 
+--Jenkins Slave through SSH--
+# On the Jenkins master server, login to the Jenkins user and generate the ssh key.
+sudo adduser jenkins --shell /bin/bash
+# by default jenkins user created on master already. So we need to change the password.
+sudo passwd jenkins
+su - jenkins
+ssh-keygen
+# add jenkins user and password with SSH on global credentials of the Jenkins UI
+
+# On the Jenkins slave, add jenkins user
+sudo adduser jenkins --shell /bin/bash
+#login with jenkins
+vi ~/.ssh/authorized_keys
+# append jenkin master's id_rsa.pub in slave's authorized_keys file.
+# test access from master to slave
+ssh jenkins@172.31.33.5
+
+#On jenkins slave, add jenkins user as sudoers
+sudo usermod -aG sudo jenkins
+sudo visudo
+#add line like:
+jenkins ALL=(ALL) NOPASSWD: ALL

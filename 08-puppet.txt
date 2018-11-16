@@ -141,11 +141,6 @@ III	Puppet Commands
 #1	Create site.pp on Puppet Master
 	sudo touch /etc/puppetlabs/code/environments/production/manifests/site.pp
 
-class { 'docker':
-  package_name => 'docker.io',
-  docker_users => ['ubuntu'],
-}
-	
 #2	Edit it to contain
 	sudo vi /etc/puppetlabs/code/environments/production/manifests/site.pp
 	

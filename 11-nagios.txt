@@ -1,0 +1,63 @@
+# nagios
+
+Refer this doc:    https://blog.serverdensity.com/howto-install-nagios-in-30-minutes-and-jumpstart-your-monitoring/
+
+# Nagios Server Installation
+sudo add-apt-repository ppa:ondrej/php
+sudo apt-get update
+sudo apt-get install apache2 php libapache2-mod-php  apache2-utils
+
+sudo a2enmod rewrite
+sudo a2enmod cgi
+sudo addgroup --system nagios
+sudo addgroup --system nagioscmd
+sudo adduser --home /usr/local/nagios --shell /bin/true --ingroup nagioscmd --system nagios
+sudo usermod -G nagioscmd www-data
+sudo apt-get install build-essential openssl libssl-dev xinetd unzip
+curl -L -O https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.1.1.tar.gz
+tar xvzf nagios-4.1.1.tar.gz
+cd nagios-4.1.1
+./configure --with-nagios-group=nagios --with-command-group=nagioscmd
+make all
+sudo make install
+sudo make install-commandmode
+sudo make install-init
+sudo make install-config
+sudo /usr/bin/install -c -m 644 sample-config/httpd.conf /etc/apache2/sites-available/nagios.conf
+sudo a2ensite nagios
+sudo update-rc.d nagios defaults
+sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+sudo service apache2 restart
+
+# nrpe installation
+cd ~
+curl -L -O http://downloads.sourceforge.net/project/nagios/nrpe-2.x/nrpe-2.15/nrpe-2.15.tar.gz
+tar xzvf nrpe-2.15.tar.gz
+cd nrpe-2.15
+./configure --enable-command-args --with-nagios-user=nagios --with-nagios-group=nagios --with-ssl=/usr/bin/openssl --with-ssl-lib=/usr/lib/x86_64-linux-gnu
+make all
+sudo make install
+sudo make install-xinetd
+sudo make install-daemon-config
+sudo vi /etc/xinetd.d/nrpe
+# add servers to be monitored in this group
+ only_from       = 127.0.0.1 52.15.101.102 52.14.174.99 18.220.34.87
+
+# nagios configuration
+sudo vi /usr/local/nagios/etc/nagios.cfg
+#uncomment
+cfg_dir=/usr/local/nagios/etc/servers
+# Create the directory
+sudo mkdir /usr/local/nagios/etc/servers
+# fill nagios admin details
+sudo vi /usr/local/nagios/etc/objects/contacts.cfg
+define command {
+command_name check_nrpe
+command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
+}
+
+#validate and apply changes
+sudo /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+
+#start nagios
+sudo service nagios start

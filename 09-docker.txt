@@ -29,3 +29,7 @@ docker run -e WORDPRESS_DB_PASSWORD=wordpress123 --name wordpress --link wordpre
 
 #docker stack deploy on swarm
 docker stack deploy --compose-file docker-compose.yml ds
+
+#project
+sudo docker build -t webapp .
+sudo docker run -it -d -p 80:80 --name webapp webapp
